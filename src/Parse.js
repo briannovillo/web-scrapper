@@ -20,10 +20,15 @@ const getAWithClass = (html, classes) => $(`a ${classes}`, html).map(function() 
   return $(this).text().trim();
 }).get();
 
+const getElement = (html, tag) => $(tag, html).map(function() {
+  return $(this).text().trim();
+}).get();
+
 module.exports = {
   getAllH1,
   getAllH2,
   getAllH3,
+  getElement,
   getDivsWithClass,
   getAWithClass
 };
