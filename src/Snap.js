@@ -5,7 +5,7 @@ const takeSnapshot = async (url) => {
   const page = await browser.newPage();
   await page.goto(url, {waitUntil: 'networkidle2', timeout: 0});
   await page.waitFor(10000);
-  await page.screenshot({path: '../snapshots/' + url.split('.')[1] + '.png'});
+  await page.screenshot({path: './snapshots/' + url.split('.')[1] + '.png'});
   await browser.close();
 };
 
