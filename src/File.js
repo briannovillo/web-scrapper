@@ -1,11 +1,10 @@
 const fs = require('fs');
 
-const saveIntoFile = (fileName, data) => {
-  fs.writeFile(fileName, data, function(err) {
-    if(err) {
-      return console.log(err);
-    }
-  });
+const saveArrayIntoFile = (fileName, data) => {
+  const file = fs.createWriteStream(fileName);
+  file.on('error', err => new Error(err));
+  data.forEach(line => file.write(line + '\n'));
+  file.end();
 };
 
-module.exports = saveIntoFile;
+module.exports = saveArrayIntoFile;

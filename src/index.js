@@ -1,58 +1,62 @@
 const fetch = require('./Fetch');
 const takeSnapshot = require('./Snap');
-const {getAllH2, getAllH3, getElement, getDivsWithClass} = require('./Parse');
-const saveIntoFile = require('./File');
+const {getElement} = require('./Parse');
+const saveArrayIntoFile = require('./File');
 
 const scrape = async () => {
-  const lanacionUrl = 'https://www.lanacion.com.ar';
-  const lanacion = await fetch(lanacionUrl);
-  const lanacionTitles = await getElement(lanacion, '.content-titulo');
-  saveIntoFile('../scraped/lanacion.txt', lanacionTitles);
-  console.log("La nacion:", lanacionTitles);
+  const sites = [
+    {
+      url: 'https://www.lanacion.com.ar',
+      element: '.content-titulo',
+      fileName: '../scraped/lanacion.txt',
+      description: 'La Nacion'
+    },
+    {
+      url: 'https://www.nytimes.com/es',
+      element: '.headline',
+      fileName: '../scraped/nytimes.txt',
+      description: 'NY Times en español'
+    },
+    {
+      url: 'https://cnnespanol.cnn.com/category/argentina',
+      element: 'h2',
+      fileName: '../scraped/cnn.txt',
+      description: 'CNN en español, categoría Argentina'
+    },
+    {
+      url: 'https://www.bbc.com/mundo/america_latina',
+      element: 'h3',
+      fileName: '../scraped/bbc.txt',
+      description: 'BBC en español, categoría America Latina'
+    },
+    {
+      url: 'https://www.infobae.com',
+      element: 'div .headline',
+      fileName: '../scraped/infobae.txt',
+      description: 'Infobae'
+    },
+    {
+      url: 'https://www.clarin.com',
+      element: 'div .mt',
+      fileName: '../scraped/clarin.txt',
+      description: 'Clarin'
+    },
+    {
+      url: 'https://www.pagina12.com.ar',
+      element: 'div .headline-content',
+      fileName: '../scraped/pagina12.txt',
+      description: 'Pagina 12'
+    }
+  ];
 
-  const nyTimesUrl = 'https://www.nytimes.com/es';
-  const nyTimes = await fetch(nyTimesUrl);
-  const nyTimesTitles = await getElement(nyTimes, '.headline');
-  saveIntoFile('../scraped/nytimes.txt', nyTimesTitles);
-  console.log("NY Times en español:", nyTimesTitles);
 
-  const ccnesUrl = 'https://cnnespanol.cnn.com/category/argentina';
-  const cnnes = await fetch(ccnesUrl);
-  const cnnesTitles = await getAllH2(cnnes);
-  saveIntoFile('../scraped/cnn.txt', cnnesTitles);
-  console.log("CNN en español, categoría Argentina:", cnnesTitles);
-
-  const bbcUrl = 'https://www.bbc.com/mundo/america_latina';
-  const bbc = await fetch(bbcUrl);
-  const bbcTitles = await getAllH3(bbc);
-  saveIntoFile('../scraped/bbc.txt', cnnesTitles);
-  console.log("BBC en español, categoría America Latina", bbcTitles);
-
-  const infobaeUrl = 'https://www.infobae.com';
-  const infobae = await fetch(infobaeUrl);
-  const infobaeTitles = await getDivsWithClass(infobae, '.headline');
-  saveIntoFile('../scraped/infobae.txt', infobaeTitles);
-  console.log("Infobae", infobaeTitles);
-
-  const clarinUrl = 'https://www.clarin.com';
-  const clarin = await fetch(clarinUrl);
-  const clarinTitles = await getDivsWithClass(clarin, '.mt');
-  saveIntoFile('../scraped/clarin.txt', clarinTitles);
-  console.log("Clarin", clarinTitles);
-
-  const pagina12Url = 'https://www.pagina12.com.ar';
-  const pagina12 = await fetch(pagina12Url);
-  const pagina12Titles = await getDivsWithClass(pagina12, '.headline-content');
-  saveIntoFile('../scraped/pagina12.txt', pagina12Titles);
-  console.log("Pagina 12", pagina12Titles);
-
-  takeSnapshot(lanacionUrl);
-  takeSnapshot(nyTimesUrl);
-  takeSnapshot(ccnesUrl);
-  takeSnapshot(bbcUrl);
-  takeSnapshot(infobaeUrl);
-  takeSnapshot(clarinUrl);
-  takeSnapshot(pagina12Url);
+  sites.map(async site => {
+    const html = await fetch(site.url);
+    const titles = getElement(html, site.element);
+    await saveArrayIntoFile(site.fileName, titles);
+    await takeSnapshot(site.url);
+    console.log(site.description, titles);
+  });
 };
 
 scrape();
